@@ -1,0 +1,42 @@
+# libraries
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
+
+# constants
+TEST_SIZE = 0.2
+SEED = 89
+
+# setting random seed
+tf.random.set_seed(SEED)
+np.random.seed(SEED)
+
+# paths
+train_csv_path = "/home/sansingh/github/flower_classification/processed_data/train_labels.csv"
+#test_csv_path = "/home/sansingh/github/flower_classification/processed_data/test_labels.csv"
+
+# read data set
+train_csv = pd.read_csv(train_csv_path)
+#test_csv = pd.read_csv(test_csv_path)
+
+# make filenames
+filenames = list(train_csv['paths'])
+
+# make labels
+unique_labels = list(train_csv['labels'].unique())
+print("* * * Following are the indices of labels: * * *")
+for i in range(len(unique_labels)):
+	print(str(i) + ". " +  unique_labels[i])
+print("")
+all_labels = list(train_csv['labels'])
+for i in range(len(all_labels)):
+	label = all_labels[i]
+	label_id = unique_labels.index(label)
+	all_labels[i] = int(label_id)
+
+# splitting data into train and validation
+X_train, X_val, Y_train, Y_val = train_test_split(filenames, all_labels, test_size=TEST_SIZE, stratify=all_labels, random_state=SEED)
+print("Train Shape: ", len(X_train), len(Y_train))
+print("Validation Shape: ", len(X_val), len(Y_val))
