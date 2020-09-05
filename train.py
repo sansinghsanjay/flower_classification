@@ -65,5 +65,10 @@ for i in range(len(X_val)):
 train_images = train_images / 255.0
 val_images = val_images / 255.0
 
-#  model architecture
+# transform labels into one-hot vectors
+Y_train_onehot = pd.get_dummies(Y_train)
+Y_val_onehot = pd.get_dummies(Y_val)
 
+#  model architecture
+model = tf.keras.models.Sequential([
+	
