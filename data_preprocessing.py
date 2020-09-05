@@ -1,3 +1,6 @@
+'''
+The purpose of this script is to make train and test files having name of images to be used for training and testing with their respective labels. Along with this, this script has also resized images to (96 x 96) size and saved it in their respective class folder under "processed_data" directory.
+'''
 # libraries
 import numpy as np
 import os
@@ -68,8 +71,8 @@ for i in range(test_df.shape[0]):
 		print(str(i + 1) + " of " + str(test_npy.shape[0]) + " done")
 
 # save npy files
-np.save(processed_data_path + "train.npy", train_npy)
-np.save(processed_data_path + "test.npy", test_npy)
-train_df.to_csv(processed_data_path + "train_labels.csv", index=False)
-test_df.to_csv(processed_data_path + "test_labels.csv", index=False)
-print("processed data saved successfully")
+#np.save(processed_data_path + "train.npy", train_npy)
+#np.save(processed_data_path + "test.npy", test_npy)
+#train_df.to_csv(processed_data_path + "train_labels.csv", index=False)
+#test_df.to_csv(processed_data_path + "test_labels.csv", index=False)
+#print("processed data saved successfully")

@@ -1,0 +1,9 @@
+* * * This file has information about the processed dataset * * *
+Following are the indices of labels in the labels npy files:
+0. rose
+1. sunflower
+2. daisy
+3. dandelion
+4. tulip
+All npy files (except for labels) have normalized values - (divided by 255.0)
+npy files for labels have one-hot values.
