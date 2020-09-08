@@ -12,6 +12,7 @@ train_npy_path = "/home/sansingh/github/flower_classification/processed_data/tra
 train_labels_npy_path = "/home/sansingh/github/flower_classification/processed_data/train_labels_onehot.npy"
 val_npy_path = "/home/sansingh/github/flower_classification/processed_data/val_images.npy"
 val_labels_npy_path = "/home/sansingh/github/flower_classification/processed_data/val_labels_onehot.npy"
+model_target_path = "/home/sansingh/github/flower_classification/"
 
 # set random seed
 tf.random.set_seed(SEED)
@@ -42,15 +43,40 @@ for i in range(len(unique_label_ids)):
 model = tf.keras.models.Sequential()
 model.add(tf.keras.layers.Conv2D(IMAGE_SIZE, (3, 3), activation='relu', input_shape=(IMAGE_SIZE, IMAGE_SIZE, IMAGE_CHANNEL)))
 model.add(tf.keras.layers.MaxPooling2D(2, 2))
-model.add(tf.keras.layers.Conv2D(192, (3, 3), activation='relu'))
+model.add(tf.keras.layers.Conv2D(116, (3, 3), activation='relu'))
 model.add(tf.keras.layers.MaxPooling2D(2, 2))
-model.add(tf.keras.layers.Conv2D(384, (3, 3), activation='relu'))
+model.add(tf.keras.layers.Conv2D(132, (3, 3), activation='relu'))
 model.add(tf.keras.layers.MaxPooling2D(2, 2))
-#model.add(tf.keras.layers.Conv2D(216, (3, 3), activation='relu'))
-#model.add(tf.keras.layers.MaxPooling2D(2, 2))
+model.add(tf.keras.layers.Conv2D(164, (3, 3), activation='relu'))
+model.add(tf.keras.layers.MaxPooling2D(2, 2))
 model.summary()
 model.add(tf.keras.layers.Flatten())
-model.add(tf.keras.layers.Dense(384, activation='relu'))
+model.add(tf.keras.layers.Dense(164, activation='relu'))
 model.add(tf.keras.layers.Dense(5))
 model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
-history = model.fit(train_images, train_label_ids, epochs=20, validation_data=(val_images, val_label_ids))
+history = model.fit(train_images, train_label_ids, epochs=10, validation_data=(val_images, val_label_ids))
+# save model
+print("Saving model...")
+model_name = input("Enter name of this model to save it: ")
+model.save(model_target_path + model_name)
+print("Model saved...")
+
+# load model
+loaded_model = tf.keras.models.load_model(model_target_path + "saved_model_1")
+loaded_model.summary()
+
+# saving model in tflite format
+converter = tf.lite.TFLiteConverter.from_saved_model(model_target_path + model_name)
+tflite_model = converter.convert()
+open(model_target_path + model_name + "/tflite_model.tflite", "wb").write(tflite_model)
+print("Model saved in tflite format")
+
+# loading tflite model
+interpreter = tf.lite.Interpreter(model_path = model_target_path + model_name + "/tflite_model.tflite")
+interpreter.allocate_tensors()
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
+interpreter.set_tensor(input_details[0]['index'], val_images)
+interpreter.invoke()
+output_data = interpreter.get_tensor(output_details[0]['index'])
+print(output_data)
